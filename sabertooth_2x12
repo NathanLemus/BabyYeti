@@ -1,0 +1,93 @@
+#sleones, nlemus,
+# Copyright (c) 2019-2020, NVIDIA CORPORATION. Liscence removed for brevity
+# See NVIDIA/jetson_gpio
+#Twist to PWM
+
+
+#!/usr/bin/env python
+import RPi.GPIO as GPIO
+import time
+import rospy #for talker/ listener
+from std_msgs.msg import String #for talker/ listener
+
+output_pins = {
+    'JETSON_NANO': 32,33 #gpio pins
+}
+
+output_pin = output_pins.get(GPIO.model, None)
+if output_pin is None:
+    raise Exception('PWM not supported on this board')
+
+pwmValue = 0
+
+
+
+#main;
+def main():
+    # Pin Setup:
+    # Board pin-numbering scheme
+    GPIO.setmode(GPIO.BOARD)
+    # set pin as an output pin with optional initial state of HIGH
+    GPIO.setup(output_pin, GPIO.OUT, initial=GPIO.HIGH)
+    p = GPIO.PWM(output_pin, 50)
+    val = 25
+    incr = 5
+    p.start(val)
+
+    print("PWM running. Press CTRL+C to exit.")
+    try:
+        while True:
+            time.sleep(0.25)
+            if val >= 100:
+                incr = -incr
+            if val <= 0:
+                incr = -incr
+            val += incr
+            p.ChangeDutyCycle(val)
+    finally:
+        p.stop()
+        GPIO.cleanup()
+
+
+
+#listener
+def callback(data):
+    rospy.loginfo(rospy.get_caller_id() + "I heard %s", data.data)
+
+def listener():
+
+    rospy.init_node('listener', anonymous=True)
+    rospy.Subscriber("chatter", String, callback)
+
+     pwmValue = .... #MUST SET BASED ON THE DATA?
+
+    # spin() simply keeps python from exiting until this node is stopped
+    rospy.spin()
+
+
+
+#PWM conversion
+def twist_to_duty_cycle(int): #WHAT DO WE PUT IN HERE?
+
+    rospy.spin() #should we use this?
+
+
+
+#MORE CODE TO LOOK AT
+def test_pwm_change_duty_cycle():
+    GPIO.setmode(GPIO.BOARD)
+    GPIO.setup(pin_data['out_a'], GPIO.OUT, initial=GPIO.HIGH)
+    p = GPIO.PWM(pin_data['out_a'], 500)
+    p.start(50)
+    p.ChangeDutyCycle(60)
+    p.stop()
+    del p
+    GPIO.cleanup()
+
+
+
+#function calls
+if __name__ == '__main__':
+    main()
+    listener() #to subscribe to twist messages
+    twist_to_duty_cycle() #twist to pwm duty cycle
