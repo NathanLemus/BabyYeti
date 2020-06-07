@@ -4,8 +4,7 @@
 import time
 import serial
 import rospy #for talker/ listener
-from geometry_msgs.msg
-import Twist #for talker/ listener
+from geometry_msgs.msg import Twist #for talker/ listener
 
 # 1-127, 64 is stop ch 1
 # 128-255, 192 is stop ch 2
@@ -25,9 +24,9 @@ serial_port = serial.Serial(
 # Wait a second to let the port initialize
 time.sleep(1)
 while True:
-print("UART running. Press CTRL+C to exit.")
-serial_port.write(Left)
-serial_port.write(Right)
+    print("UART running. Press CTRL+C to exit.")
+    serial_port.write(Left)
+    serial_port.write(Right)
 
 
 #subscriber
@@ -77,7 +76,7 @@ def Conversion(i, j):
     if j > 65:
         Left += j/2
         Right -= j/2
-    else if j < 63:
+    elif j < 63:
         Left -= j/2
         Right += j/2
     else:
